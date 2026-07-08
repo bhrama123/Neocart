@@ -1,7 +1,7 @@
 const router = require("express").Router();
 const User = require("../models/user");
 const Order = require("../models/order");
-const Product = require("../models/Product");
+const Product = require("../models/ProductModel");
 
 router.get("/analytics", async (req,res)=>{
 
