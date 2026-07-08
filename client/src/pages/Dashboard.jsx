@@ -14,13 +14,11 @@ function Dashboard() {
 
 
   // ================= GET PRODUCTS =================
-
   useEffect(() => {
-
-    fetch("http://localhost:5000/api/products")
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
-
+    api
+      .get("/products")
+      .then((res) => setProducts(res.data))
+      .catch((err) => console.log(err));
   }, []);
 
 
@@ -187,10 +185,7 @@ function Dashboard() {
           <div className="card" key={product._id}>
 
 
-            <img
-              src={`http://localhost:5000/uploads/${product.image}`}
-              alt=""
-            />
+            <img src={product.image} />
 
 
             <h3>{product.name}</h3>
