@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
+require("dotenv").config();
 
 const app = express();
 
@@ -26,17 +27,18 @@ app.get("/", (req, res) => {
 
 // MongoDB Connection
 mongoose
-  .connect("mongodb://127.0.0.1:27017/ecommerce")
+  .connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ MongoDB Connected");
     console.log("📁 Uploads Folder:", path.join(__dirname, "uploads"));
   })
   .catch((err) => {
-    console.log("❌ MongoDB Error:", err);
+    console.error("❌ MongoDB Error:", err.message);
+    process.exit(1);
   });
 
 // Start Server
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
