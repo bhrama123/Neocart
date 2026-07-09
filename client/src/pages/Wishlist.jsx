@@ -42,9 +42,10 @@ function Wishlist() {
         wishlist.map((item) => (
           <div key={item._id} style={{ marginBottom: "20px" }}>
 
-            <img
-  src={product.image}
-  alt={product.name}
+   <img
+  src={item.image}
+  alt={item.name}
+  style={{ width: "150px", height: "150px", objectFit: "cover" }}
 />
 
             <h3>{item.name}</h3>

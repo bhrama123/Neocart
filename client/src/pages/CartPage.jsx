@@ -74,9 +74,15 @@ function CartPage() {
               }}
             >
 
-              <img
-  src={product.image}
-  alt={product.name}
+  <img
+  src={item.image}
+  alt={item.name}
+  style={{
+    width: "120px",
+    height: "120px",
+    objectFit: "cover",
+    borderRadius: "10px"
+  }}
 />
 
               <div>
