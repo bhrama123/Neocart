@@ -185,7 +185,10 @@ function Dashboard() {
           <div className="card" key={product._id}>
 
 
-            <img src={product.image} />
+            <img
+  src={product.image}
+  alt={product.name}
+/>
 
 
             <h3>{product.name}</h3>

@@ -50,10 +50,9 @@ return(
 <h2>{product.name}</h2>
 
 <img
-src={`http://localhost:5000/uploads/${product.image}`}
-width="250"
+  src={product.image}
+  alt={product.name}
 />
-
 <h3>₹ {product.price}</h3>
 
 <p>{product.description || "No description available"}</p>

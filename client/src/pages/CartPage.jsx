@@ -75,10 +75,9 @@ function CartPage() {
             >
 
               <img
-                src={`http://localhost:5000/uploads/${item.image}`}
-                alt={item.name}
-                width="120"
-              />
+  src={product.image}
+  alt={product.name}
+/>
 
               <div>
 

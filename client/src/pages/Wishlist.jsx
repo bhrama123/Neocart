@@ -43,9 +43,9 @@ function Wishlist() {
           <div key={item._id} style={{ marginBottom: "20px" }}>
 
             <img
-              src={`http://localhost:5000/uploads/${item.image}`}
-              width="120"
-            />
+  src={product.image}
+  alt={product.name}
+/>
 
             <h3>{item.name}</h3>
 
