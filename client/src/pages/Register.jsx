@@ -11,7 +11,7 @@ const [password, setPassword] = useState("");
 
 const registerUser = async () => {
 
-const res = await fetch("http://localhost:5000/api/auth/register", {
+const res = await fetch("https://neocart-sqeh.onrender.com/api/auth/register", {
 
 method: "POST",
 

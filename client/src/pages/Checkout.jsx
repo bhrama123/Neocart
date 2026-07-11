@@ -207,7 +207,7 @@ function Checkout() {
             >
 
               <img
-                src={`http://localhost:5000/uploads/${item.image}`}
+                src={`https://neocart-sqeh.onrender.com/uploads/${item.image}`}
                 alt={item.name}
               />
 
