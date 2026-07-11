@@ -4,4 +4,5 @@ module.exports = mongoose.model("Product", {
   name: String,
   price: Number,
   image: String,
+  category:String,
 });

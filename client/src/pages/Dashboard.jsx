@@ -125,7 +125,8 @@ const [selectedCategory, setSelectedCategory] = useState("All");
       <div id="products"
       className="products">
 
-        .filter((product) => {
+        {products
+          .filter((product) => {
   const matchesSearch = product.name
     .toLowerCase()
     .includes(search.toLowerCase());
