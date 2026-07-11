@@ -8,7 +8,15 @@ function Hero() {
 
         <p>Up to 50% OFF on Mobiles, Laptops & Accessories</p>
 
-        <button>Shop Now</button>
+       <button
+  onClick={() =>
+    document
+      .getElementById("products")
+      ?.scrollIntoView({ behavior: "smooth" })
+  }
+>
+  Shop Now
+</button>
       </div>
     </section>
   );

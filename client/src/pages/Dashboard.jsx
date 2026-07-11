@@ -122,14 +122,21 @@ const [selectedCategory, setSelectedCategory] = useState("All");
         Featured Products
       </h2>
 
-      <div className="products">
+      <div id="products"
+      className="products">
 
-        {products
-          .filter((product) =>
-            product.name
-              .toLowerCase()
-              .includes(search.toLowerCase())
-          )
+        .filter((product) => {
+  const matchesSearch = product.name
+    .toLowerCase()
+    .includes(search.toLowerCase());
+
+  const matchesCategory =
+    selectedCategory === "All" ||
+    product.category?.toLowerCase() ===
+      selectedCategory.toLowerCase();
+
+  return matchesSearch && matchesCategory;
+})
           .map((product) => (
             <div className="card" key={product._id}>
 
