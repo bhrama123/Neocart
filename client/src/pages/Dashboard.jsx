@@ -142,9 +142,9 @@ const [selectedCategory, setSelectedCategory] = useState("All");
             <div className="card" key={product._id}>
 
               <img
-                src={product.image}
-                alt={product.name}
-              />
+  src={`https://neocart-backend-qnte.onrender.com/uploads/${product.image}`}
+  alt={product.name}
+/>
 
               <h3>{product.name}</h3>
 
