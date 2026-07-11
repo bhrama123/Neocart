@@ -60,17 +60,20 @@ function MyOrders() {
                     marginBottom: "20px"
                   }}
                 >
-
-                  <img
-                    src={`https://neocart-sqeh.onrender.com/uploads/${item.image}`}
-                    alt={item.name}
-                    width="120"
-                    height="120"
-                    style={{
-                      objectFit: "cover",
-                      borderRadius: "8px"
-                    }}
-                  />
+<img
+  src={
+    item.image?.startsWith("http")
+      ? item.image
+      : `https://neocart-backend-qnte.onrender.com/uploads/${item.image}`
+  }
+  alt={item.name}
+  width="120"
+  height="120"
+  style={{
+    objectFit: "cover",
+    borderRadius: "8px"
+  }}
+/>
 
                   <div>
 
