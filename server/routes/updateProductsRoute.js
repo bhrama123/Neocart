@@ -84,8 +84,10 @@ const products = [
   ],
   [
     "Logitech C920 Webcam",
-    "https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=800"
-  ]
+{
+  name: "Logitech C920 Webcam",
+  image: "logitechc920new.jpg"
+}  ]
 ];
 
 router.get("/", async (req, res) => {
