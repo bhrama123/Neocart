@@ -27,7 +27,7 @@ const products = [
   ["Logitech MX Master 3S", "logitechmxmaster3s.jpg"],
   ["Mechanical Keyboard", "redragonk552.jpg"],
   ["Xiaomi Power Bank", "xiaomipowerbank.jpg"],
-  ["Logitech C920 Webcam", "logitechc920.jpg"],
+  ["Logitech C920 Webcam", "logitechc920new.jpg"],
 ];
 
 async function updateProducts() {
