@@ -3,14 +3,12 @@ import { useNavigate } from "react-router-dom";
 import api from "../axios";
 
 function CartPage() {
-
   const [cart, setCart] = useState([]);
 
   const navigate = useNavigate();
 
   const userId = localStorage.getItem("userId") || "demoUser";
 
-  // FETCH CART
   useEffect(() => {
     fetchCart();
   }, []);
@@ -24,7 +22,6 @@ function CartPage() {
     }
   };
 
-  // REMOVE ITEM
   const removeItem = async (id) => {
     try {
       await api.delete(`/cart/${id}`);
@@ -34,33 +31,48 @@ function CartPage() {
     }
   };
 
-  // GO TO CHECKOUT
-  const goToCheckout = () => {
+  const getImageUrl = (item) => {
+    const imageMap = {
+      "iPhone 15": "iphone15.jpg",
+      "Samsung Galaxy S24": "s24.jpg",
+      "OnePlus 12": "oneplus12.jpg",
+      "Google Pixel 9": "pixel9.jpg",
+      "MacBook Air M3": "macbookairm3.jpg",
+      "Dell XPS 15": "dellxps15.jpg",
+      "HP Victus 15": "hpvictus15.jpg",
+      "Lenovo Legion 5": "lenovolegion5.jpg",
+    };
 
-    localStorage.setItem("cart", JSON.stringify(cart));
+    const image = imageMap[item.name] || item.image;
 
-    navigate("/checkout");
+    if (!image) return "";
 
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    return `https://neocart-backend-qnte.onrender.com/uploads/${image}`;
   };
 
-  // TOTAL
-  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  const goToCheckout = () => {
+    localStorage.setItem("cart", JSON.stringify(cart));
+    navigate("/checkout");
+  };
+
+  const total = cart.reduce(
+    (sum, item) => sum + Number(item.price),
+    0
+  );
 
   return (
     <div style={{ padding: "40px" }}>
-
       <h1>Your Cart</h1>
 
       {cart.length === 0 ? (
-
         <h3>Cart is Empty</h3>
-
       ) : (
-
         <>
-
           {cart.map((item) => (
-
             <div
               key={item._id}
               style={{
@@ -70,23 +82,21 @@ function CartPage() {
                 background: "white",
                 padding: "20px",
                 marginTop: "20px",
-                borderRadius: "10px"
+                borderRadius: "10px",
               }}
             >
-
-  <img
-  src={item.image}
-  alt={item.name}
-  style={{
-    width: "120px",
-    height: "120px",
-    objectFit: "cover",
-    borderRadius: "10px"
-  }}
-/>
+              <img
+                src={getImageUrl(item)}
+                alt={item.name}
+                style={{
+                  width: "120px",
+                  height: "120px",
+                  objectFit: "contain",
+                  borderRadius: "10px",
+                }}
+              />
 
               <div>
-
                 <h2>{item.name}</h2>
 
                 <p>₹ {item.price}</p>
@@ -99,16 +109,13 @@ function CartPage() {
                     border: "none",
                     padding: "10px",
                     borderRadius: "5px",
-                    cursor: "pointer"
+                    cursor: "pointer",
                   }}
                 >
                   Remove
                 </button>
-
               </div>
-
             </div>
-
           ))}
 
           <h2 style={{ marginTop: "30px" }}>
@@ -125,16 +132,13 @@ function CartPage() {
               padding: "15px 30px",
               borderRadius: "8px",
               cursor: "pointer",
-              fontSize: "16px"
+              fontSize: "16px",
             }}
           >
             Proceed to Checkout
           </button>
-
         </>
-
       )}
-
     </div>
   );
 }
