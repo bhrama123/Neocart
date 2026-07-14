@@ -2,37 +2,61 @@ import { useEffect, useState } from "react";
 import api from "../axios";
 
 function MyOrders() {
-
   const [orders, setOrders] = useState([]);
+  const [products, setProducts] = useState([]);
 
   const userId = localStorage.getItem("userId") || "demoUser";
 
   useEffect(() => {
-    fetchOrders();
+    fetchData();
   }, []);
 
-  const fetchOrders = async () => {
+  const fetchData = async () => {
     try {
-      const res = await api.get(`/orders/${userId}`);
-      setOrders(res.data);
+      const [ordersRes, productsRes] = await Promise.all([
+        api.get(`/orders/${userId}`),
+        api.get("/products"),
+      ]);
+
+      setOrders(ordersRes.data);
+      setProducts(productsRes.data);
     } catch (err) {
       console.log(err);
     }
   };
 
-  return (
-    <div style={{ padding: "40px", background: "#f5f5f5", minHeight: "100vh" }}>
+  const getImageUrl = (item) => {
+    const currentProduct = products.find(
+      (product) =>
+        product.name?.toLowerCase().trim() ===
+        item.name?.toLowerCase().trim()
+    );
 
+    const image = currentProduct?.image || item.image;
+
+    if (!image) return "";
+
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    return `https://neocart-backend-qnte.onrender.com/uploads/${image}`;
+  };
+
+  return (
+    <div
+      style={{
+        padding: "40px",
+        background: "#f5f5f5",
+        minHeight: "100vh",
+      }}
+    >
       <h1 style={{ marginBottom: "30px" }}>My Orders</h1>
 
       {orders.length === 0 ? (
-
         <h2>No Orders Yet</h2>
-
       ) : (
-
         orders.map((order) => (
-
           <div
             key={order._id}
             style={{
@@ -40,53 +64,47 @@ function MyOrders() {
               borderRadius: "10px",
               padding: "20px",
               marginBottom: "30px",
-              boxShadow: "0 0 10px rgba(0,0,0,0.1)"
+              boxShadow: "0 0 10px rgba(0,0,0,0.1)",
             }}
           >
-
             <h3 style={{ marginBottom: "20px" }}>
               Order ID : {order._id}
             </h3>
 
             {order.items &&
               order.items.map((item, index) => (
-
                 <div
                   key={index}
                   style={{
                     display: "flex",
                     gap: "20px",
                     alignItems: "center",
-                    marginBottom: "20px"
+                    marginBottom: "20px",
                   }}
                 >
-<img
-  src={
-    item.image?.startsWith("http")
-      ? item.image
-      : `https://neocart-backend-qnte.onrender.com/uploads/${item.image}`
-  }
-  alt={item.name}
-  width="120"
-  height="120"
-  style={{
-    objectFit: "cover",
-    borderRadius: "8px"
-  }}
-/>
+                  <img
+                    src={getImageUrl(item)}
+                    alt={item.name}
+                    width="120"
+                    height="120"
+                    style={{
+                      objectFit: "contain",
+                      borderRadius: "8px",
+                    }}
+                  />
 
                   <div>
-
                     <h2>{item.name}</h2>
 
-                    <p><b>Price :</b> ₹ {item.price}</p>
+                    <p>
+                      <b>Price :</b> ₹ {item.price}
+                    </p>
 
-                    <p><b>Quantity :</b> {item.quantity}</p>
-
+                    <p>
+                      <b>Quantity :</b> {item.quantity}
+                    </p>
                   </div>
-
                 </div>
-
               ))}
 
             <hr />
@@ -129,18 +147,13 @@ function MyOrders() {
                 </h3>
 
                 <p>{order.customer.name}</p>
-
                 <p>{order.customer.phone}</p>
-
                 <p>{order.customer.email}</p>
+                <p>{order.customer.address}</p>
 
                 <p>
-                  {order.customer.address}
-                </p>
-
-                <p>
-                  {order.customer.city},{" "}
-                  {order.customer.state} - {order.customer.pincode}
+                  {order.customer.city}, {order.customer.state} -{" "}
+                  {order.customer.pincode}
                 </p>
               </>
             )}
@@ -148,18 +161,14 @@ function MyOrders() {
             <h2
               style={{
                 marginTop: "20px",
-                color: "#ff6600"
+                color: "#ff6600",
               }}
             >
               Total : ₹ {order.total}
             </h2>
-
           </div>
-
         ))
-
       )}
-
     </div>
   );
 }
