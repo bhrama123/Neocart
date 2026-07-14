@@ -86,7 +86,7 @@ const products = [
     "Logitech C920 Webcam",
 {
   name: "Logitech C920 Webcam",
-  image: "logitechc920new.jpg"
+  image: "logitechc920.jpg"
 }  ]
 ];
 
