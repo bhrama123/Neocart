@@ -15,10 +15,10 @@ function App() {
     <BrowserRouter>
       <Routes>
 
-        {/* Login */}
+        {/* LOGIN */}
         <Route path="/" element={<Auth />} />
 
-        {/* Dashboard */}
+        {/* DASHBOARD */}
         <Route
           path="/dashboard"
           element={
@@ -28,7 +28,7 @@ function App() {
           }
         />
 
-        {/* Wishlist */}
+        {/* WISHLIST */}
         <Route
           path="/wishlist"
           element={
@@ -38,7 +38,7 @@ function App() {
           }
         />
 
-        {/* Cart */}
+        {/* CART */}
         <Route
           path="/cart"
           element={
@@ -48,7 +48,7 @@ function App() {
           }
         />
 
-        {/* NEW CHECKOUT PAGE */}
+        {/* CHECKOUT */}
         <Route
           path="/checkout"
           element={
@@ -58,7 +58,7 @@ function App() {
           }
         />
 
-        {/* Orders */}
+        {/* ORDERS */}
         <Route
           path="/orders"
           element={
@@ -68,7 +68,7 @@ function App() {
           }
         />
 
-        {/* Product Details */}
+        {/* PRODUCT DETAILS */}
         <Route
           path="/product/:id"
           element={
@@ -78,7 +78,7 @@ function App() {
           }
         />
 
-        {/* Admin */}
+        {/* ADMIN */}
         <Route
           path="/admin"
           element={

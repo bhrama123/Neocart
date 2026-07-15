@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 import { FaHeart } from "react-icons/fa";
 
@@ -13,8 +14,13 @@ function Dashboard() {
   const [wishlist, setWishlist] = useState([]);
   const [message, setMessage] = useState("");
   const [search, setSearch] = useState("");
-const [selectedCategory, setSelectedCategory] = useState("All");
-  const userId = localStorage.getItem("userId") || "demoUser";
+  const [selectedCategory, setSelectedCategory] =
+    useState("All");
+
+  const navigate = useNavigate();
+
+  const userId =
+    localStorage.getItem("userId") || "demoUser";
 
   // ================= GET PRODUCTS =================
   useEffect(() => {
@@ -32,10 +38,16 @@ const [selectedCategory, setSelectedCategory] = useState("All");
   const fetchWishlist = async () => {
     try {
       const res = await api.get(`/wishlist/${userId}`);
+
       setWishlist(res.data);
     } catch (err) {
       console.log(err);
     }
+  };
+
+  // ================= OPEN PRODUCT =================
+  const openProduct = (productId) => {
+    navigate(`/product/${productId}`);
   };
 
   // ================= ADD TO CART =================
@@ -61,40 +73,50 @@ const [selectedCategory, setSelectedCategory] = useState("All");
 
   // ================= TOGGLE WISHLIST =================
   const toggleWishlist = async (product) => {
-    const exists = wishlist.find(
-      (item) => String(item.productId) === String(product._id)
-    );
-
-    if (exists) {
-      await api.delete(`/wishlist/${exists._id}`);
-
-      setWishlist(
-        wishlist.filter((item) => item._id !== exists._id)
+    try {
+      const exists = wishlist.find(
+        (item) =>
+          String(item.productId) === String(product._id)
       );
 
-      setMessage(product.name + " removed from wishlist");
-    } else {
-      const res = await api.post("/wishlist", {
-        userId,
-        productId: product._id,
-        name: product.name,
-        price: product.price,
-        image: product.image,
-      });
+      if (exists) {
+        await api.delete(`/wishlist/${exists._id}`);
 
-      setWishlist([...wishlist, res.data]);
+        setWishlist(
+          wishlist.filter(
+            (item) => item._id !== exists._id
+          )
+        );
 
-      setMessage(product.name + " added to wishlist");
+        setMessage(
+          product.name + " removed from wishlist"
+        );
+      } else {
+        const res = await api.post("/wishlist", {
+          userId,
+          productId: product._id,
+          name: product.name,
+          price: product.price,
+          image: product.image,
+        });
+
+        setWishlist([...wishlist, res.data]);
+
+        setMessage(
+          product.name + " added to wishlist"
+        );
+      }
+
+      setTimeout(() => {
+        setMessage("");
+      }, 2000);
+    } catch (err) {
+      console.log(err);
     }
-
-    setTimeout(() => {
-      setMessage("");
-    }, 2000);
   };
 
   return (
     <div>
-
       {message && (
         <div className="message">
           {message}
@@ -108,10 +130,10 @@ const [selectedCategory, setSelectedCategory] = useState("All");
         setSearch={setSearch}
       />
 
-    <Categories
-  selectedCategory={selectedCategory}
-  setSelectedCategory={setSelectedCategory}
-/>
+      <Categories
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+      />
 
       <h2
         style={{
@@ -122,42 +144,58 @@ const [selectedCategory, setSelectedCategory] = useState("All");
         Featured Products
       </h2>
 
-      <div id="products"
-      className="products">
-
+      <div id="products" className="products">
         {products
           .filter((product) => {
-  const matchesSearch = product.name
-    .toLowerCase()
-    .includes(search.toLowerCase());
+            const matchesSearch = product.name
+              .toLowerCase()
+              .includes(search.toLowerCase());
 
-  const matchesCategory =
-    selectedCategory === "All" ||
-    product.category?.toLowerCase() ===
-      selectedCategory.toLowerCase();
+            const matchesCategory =
+              selectedCategory === "All" ||
+              product.category?.toLowerCase() ===
+                selectedCategory.toLowerCase();
 
-  return matchesSearch && matchesCategory;
-})
+            return matchesSearch && matchesCategory;
+          })
           .map((product) => (
-            <div className="card" key={product._id}>
-
+            <div
+              className="card"
+              key={product._id}
+            >
               <img
-  src={
-    product.image?.startsWith("http")
-      ? product.image
-      : `https://neocart-backend-qnte.onrender.com/uploads/${product.image}`
-  }
-  alt={product.name}
-/>
+                src={
+                  product.image?.startsWith("http")
+                    ? product.image
+                    : `https://neocart-backend-qnte.onrender.com/uploads/${product.image}`
+                }
+                alt={product.name}
+                onClick={() =>
+                  openProduct(product._id)
+                }
+                style={{
+                  cursor: "pointer",
+                }}
+              />
 
-              <h3>{product.name}</h3>
+              <h3
+                onClick={() =>
+                  openProduct(product._id)
+                }
+                style={{
+                  cursor: "pointer",
+                }}
+              >
+                {product.name}
+              </h3>
 
               <p>₹ {product.price}</p>
 
               <div className="actions">
-
                 <button
-                  onClick={() => addToCart(product)}
+                  onClick={() =>
+                    addToCart(product)
+                  }
                 >
                   Add To Cart
                 </button>
@@ -172,16 +210,14 @@ const [selectedCategory, setSelectedCategory] = useState("All");
                       ? "heart active"
                       : "heart"
                   }
-                  onClick={() => toggleWishlist(product)}
+                  onClick={() =>
+                    toggleWishlist(product)
+                  }
                 />
-
               </div>
-
             </div>
           ))}
-
       </div>
-
     </div>
   );
 }
