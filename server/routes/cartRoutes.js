@@ -38,5 +38,26 @@ router.delete("/:id", async (req, res) => {
   res.json("Deleted");
 
 });
+// UPDATE QUANTITY
+router.put("/:id", async (req, res) => {
+  try {
+    const cart = await Cart.findByIdAndUpdate(
+      req.params.id,
+      {
+        quantity: req.body.quantity,
+      },
+      {
+        new: true,
+      }
+    );
 
+    res.json(cart);
+  } catch (err) {
+    console.log(err);
+
+    res.status(500).json({
+      message: "Unable to update quantity",
+    });
+  }
+});
 module.exports = router;
