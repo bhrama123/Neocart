@@ -7,29 +7,67 @@ function CartPage() {
 
   const navigate = useNavigate();
 
-  const userId = localStorage.getItem("userId") || "demoUser";
+  const userId =
+    localStorage.getItem("userId") || "demoUser";
 
   useEffect(() => {
     fetchCart();
   }, []);
 
+  // ================= FETCH CART =================
+
   const fetchCart = async () => {
     try {
       const res = await api.get(`/cart/${userId}`);
+
       setCart(res.data);
     } catch (err) {
       console.log(err);
     }
   };
 
-  const removeItem = async (id) => {
+  // ================= UPDATE QUANTITY =================
+
+  const updateQuantity = async (item, newQuantity) => {
+    if (newQuantity < 1) {
+      return;
+    }
+
     try {
-      await api.delete(`/cart/${id}`);
-      fetchCart();
+      await api.put(`/cart/${item._id}`, {
+        quantity: newQuantity,
+      });
+
+      setCart((currentCart) =>
+        currentCart.map((cartItem) =>
+          cartItem._id === item._id
+            ? {
+                ...cartItem,
+                quantity: newQuantity,
+              }
+            : cartItem
+        )
+      );
     } catch (err) {
       console.log(err);
     }
   };
+
+  // ================= REMOVE ITEM =================
+
+  const removeItem = async (id) => {
+    try {
+      await api.delete(`/cart/${id}`);
+
+      setCart((currentCart) =>
+        currentCart.filter((item) => item._id !== id)
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  // ================= IMAGE URL =================
 
   const getImageUrl = (item) => {
     const imageMap = {
@@ -45,7 +83,9 @@ function CartPage() {
 
     const image = imageMap[item.name] || item.image;
 
-    if (!image) return "";
+    if (!image) {
+      return "";
+    }
 
     if (image.startsWith("http")) {
       return image;
@@ -54,13 +94,24 @@ function CartPage() {
     return `https://neocart-backend-qnte.onrender.com/uploads/${image}`;
   };
 
+  // ================= CHECKOUT =================
+
   const goToCheckout = () => {
-    localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem(
+      "cart",
+      JSON.stringify(cart)
+    );
+
     navigate("/checkout");
   };
 
+  // ================= TOTAL =================
+
   const total = cart.reduce(
-    (sum, item) => sum + Number(item.price),
+    (sum, item) =>
+      sum +
+      Number(item.price) *
+        Number(item.quantity || 1),
     0
   );
 
@@ -101,8 +152,71 @@ function CartPage() {
 
                 <p>₹ {item.price}</p>
 
+                {/* QUANTITY */}
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "12px",
+                    marginBottom: "15px",
+                  }}
+                >
+                  <button
+                    onClick={() =>
+                      updateQuantity(
+                        item,
+                        Number(item.quantity || 1) - 1
+                      )
+                    }
+                    style={{
+                      width: "35px",
+                      height: "35px",
+                      fontSize: "20px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    −
+                  </button>
+
+                  <strong
+                    style={{
+                      fontSize: "18px",
+                    }}
+                  >
+                    {item.quantity || 1}
+                  </strong>
+
+                  <button
+                    onClick={() =>
+                      updateQuantity(
+                        item,
+                        Number(item.quantity || 1) + 1
+                      )
+                    }
+                    style={{
+                      width: "35px",
+                      height: "35px",
+                      fontSize: "20px",
+                      cursor: "pointer",
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
+
+                <p>
+                  <strong>
+                    Subtotal: ₹{" "}
+                    {Number(item.price) *
+                      Number(item.quantity || 1)}
+                  </strong>
+                </p>
+
                 <button
-                  onClick={() => removeItem(item._id)}
+                  onClick={() =>
+                    removeItem(item._id)
+                  }
                   style={{
                     background: "red",
                     color: "white",

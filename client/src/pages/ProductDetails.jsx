@@ -8,8 +8,7 @@ function ProductDetails() {
   const navigate = useNavigate();
 
   const [product, setProduct] = useState(null);
-  const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState("");
+  const [quantity, setQuantity] = useState(1);
   const [message, setMessage] = useState("");
 
   const userId =
@@ -22,6 +21,16 @@ function ProductDetails() {
       .catch((err) => console.log(err));
   }, [id]);
 
+  const increaseQuantity = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
+  const decreaseQuantity = () => {
+    setQuantity((prev) =>
+      prev > 1 ? prev - 1 : 1
+    );
+  };
+
   const addToCart = async () => {
     try {
       await api.post("/cart", {
@@ -30,9 +39,12 @@ function ProductDetails() {
         name: product.name,
         price: product.price,
         image: product.image,
+        quantity,
       });
 
-      setMessage("Added to cart successfully");
+      setMessage(
+        `${quantity} ${product.name} added to cart`
+      );
 
       setTimeout(() => setMessage(""), 2000);
     } catch (err) {
@@ -40,19 +52,19 @@ function ProductDetails() {
     }
   };
 
-  const buyNow = async () => {
-    const cartItem = {
+  const buyNow = () => {
+    const item = {
       _id: product._id,
       productId: product._id,
       name: product.name,
       price: product.price,
       image: product.image,
-      quantity: 1,
+      quantity,
     };
 
     localStorage.setItem(
       "cart",
-      JSON.stringify([cartItem])
+      JSON.stringify([item])
     );
 
     navigate("/checkout");
@@ -76,36 +88,8 @@ function ProductDetails() {
     }
   };
 
-  const submitReview = async () => {
-    if (!comment.trim()) {
-      alert("Please write a review");
-      return;
-    }
-
-    try {
-      await api.post("/reviews", {
-        productId: id,
-        userId,
-        rating: Number(rating),
-        comment,
-      });
-
-      alert("Review submitted");
-
-      setComment("");
-      setRating(5);
-    } catch (err) {
-      console.log(err);
-      alert("Unable to submit review");
-    }
-  };
-
   if (!product) {
-    return (
-      <h2 style={{ padding: "40px" }}>
-        Loading...
-      </h2>
-    );
+    return <h2 style={{ padding: "40px" }}>Loading...</h2>;
   }
 
   const imageUrl = product.image?.startsWith("http")
@@ -127,7 +111,6 @@ function ProductDetails() {
             color: "white",
             padding: "12px",
             textAlign: "center",
-            marginBottom: "20px",
           }}
         >
           {message}
@@ -148,24 +131,20 @@ function ProductDetails() {
           borderRadius: "10px",
         }}
       >
-        <div>
-          <img
-            src={imageUrl}
-            alt={product.name}
-            style={{
-              width: "400px",
-              height: "400px",
-              objectFit: "contain",
-            }}
-          />
-        </div>
+        <img
+          src={imageUrl}
+          alt={product.name}
+          style={{
+            width: "400px",
+            height: "400px",
+            objectFit: "contain",
+          }}
+        />
 
         <div style={{ flex: 1 }}>
           <h1>{product.name}</h1>
 
-          <p style={{ color: "green" }}>
-            ⭐⭐⭐⭐⭐ 5.0 Rating
-          </p>
+          <p>⭐⭐⭐⭐⭐ 5.0 Rating</p>
 
           <hr />
 
@@ -187,15 +166,55 @@ function ProductDetails() {
             ✓ In Stock
           </p>
 
-          <p>
-            🚚 FREE Delivery
-          </p>
+          <p>🚚 FREE Delivery</p>
+
+          <h3>Quantity</h3>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "15px",
+              marginBottom: "25px",
+            }}
+          >
+            <button
+              onClick={decreaseQuantity}
+              style={{
+                width: "40px",
+                height: "40px",
+                fontSize: "22px",
+                cursor: "pointer",
+              }}
+            >
+              −
+            </button>
+
+            <h2>{quantity}</h2>
+
+            <button
+              onClick={increaseQuantity}
+              style={{
+                width: "40px",
+                height: "40px",
+                fontSize: "22px",
+                cursor: "pointer",
+              }}
+            >
+              +
+            </button>
+          </div>
+
+          <h3>
+            Total: ₹ {product.price * quantity}
+          </h3>
 
           <div
             style={{
               display: "flex",
               gap: "15px",
-              marginTop: "30px",
+              alignItems: "center",
+              marginTop: "25px",
             }}
           >
             <button
@@ -230,59 +249,10 @@ function ProductDetails() {
                 color: "red",
                 fontSize: "30px",
                 cursor: "pointer",
-                marginTop: "8px",
               }}
             />
           </div>
         </div>
-      </div>
-
-      <div
-        style={{
-          background: "white",
-          padding: "30px",
-          marginTop: "30px",
-          borderRadius: "10px",
-        }}
-      >
-        <h2>Write a Review ⭐</h2>
-
-        <select
-          value={rating}
-          onChange={(e) =>
-            setRating(e.target.value)
-          }
-        >
-          <option value="5">⭐⭐⭐⭐⭐</option>
-          <option value="4">⭐⭐⭐⭐</option>
-          <option value="3">⭐⭐⭐</option>
-          <option value="2">⭐⭐</option>
-          <option value="1">⭐</option>
-        </select>
-
-        <br />
-        <br />
-
-        <textarea
-          placeholder="Write your review..."
-          value={comment}
-          onChange={(e) =>
-            setComment(e.target.value)
-          }
-          rows="5"
-          style={{
-            width: "100%",
-            maxWidth: "600px",
-            padding: "10px",
-          }}
-        />
-
-        <br />
-        <br />
-
-        <button onClick={submitReview}>
-          Submit Review
-        </button>
       </div>
     </div>
   );
